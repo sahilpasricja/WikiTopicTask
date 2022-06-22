@@ -1,12 +1,9 @@
-
+package Task1;
 //You are given an array of integers (both positive and negative). Find the continuous sequence
 //        with largest sum.
 //        Example:
 //        Input: (2, -8, 3, -2, 4, -10)
 //        Output: 5 (ie., {3, -2, 4}
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LargestSumSequence {
     public Integer continuesSequence1(int[] nums) {

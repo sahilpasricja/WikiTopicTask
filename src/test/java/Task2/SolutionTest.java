@@ -1,4 +1,4 @@
-package WikiTopicWordCount;
+package Task2;
 
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -35,12 +35,12 @@ public class SolutionTest extends TestCase {
     @Test
     @DisplayName("Test connection to Wiki")
     public void testConnection() throws Exception {
-        boolean connectionEastablished = false;
+        boolean connectionEstablished = false;
         try(final InputStream is = solution.getInputStream(topicSource)){
-            connectionEastablished = true;
+            connectionEstablished = true;
         }
         finally {
-            assertEquals(connectionEastablished,true);
+            assertEquals(connectionEstablished,true);
         }
     }
 
@@ -49,6 +49,6 @@ public class SolutionTest extends TestCase {
     public void testException() throws Exception {
         topicSource = new TopicSource(DEFAULT_TOPIC, SearchURL.WIKI_ERRONEOUS_URL);
         Throwable exception = assertThrows(Exception.class , () ->  solution.getInputStream(topicSource));
-        assertEquals("Unable to establish connection.", exception.getMessage());
+        assertEquals(java.io.IOException.class, exception.getClass());
     }
 }

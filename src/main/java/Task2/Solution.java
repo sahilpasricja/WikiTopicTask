@@ -1,4 +1,4 @@
-package WikiTopicWordCount;
+package Task2;
 
 import java.io.*;
 import java.net.*;
@@ -20,25 +20,36 @@ public class Solution {
     public int getOccurrenceCount(String topic) throws Exception {
         topicSource = new TopicSource(topic,SearchURL.WIKI);
         InputStream is = getInputStream(topicSource);
-        JSONObject jsonResponse = inputStreamToJsonObj(is);
+        JSONObject jsonResponse = inputStreamToJsonObjText(is);
         return countKeyword(topicSource,jsonResponse);
 
     }
 
-    //Fetch topic data from wiki and store it as stream
-    public InputStream getInputStream(TopicSource topicSource) throws Exception {
+    /**
+     * Fetch topic data from wiki and store it as stream
+     * @param topicSource with information about url and topic
+     * @return InputStream from Wiki
+     * @throws Exception if connection can not be established
+     */
+
+    public InputStream getInputStream(TopicSource topicSource) throws IOException {
         String readurl = String.format(topicSource.searchUrl(), topicSource.topic());
         try{
             InputStream is = new URL(readurl).openStream();
             return is;
         }
-        catch (Exception e){
-            throw new Exception("Unable to establish connection.", e);
+        catch (IOException e){
+            throw new IOException("Unable to establish connection.", e);
         }
     }
 
-    // Convert Input Stream to Json Object and fetch for key : Text
-    private JSONObject inputStreamToJsonObj(InputStream is) throws IOException {
+    /***
+     * Convert Input Stream to Json Object and fetch for key : Text
+     * @param is input stream  of Wiki Data
+     * @return filtered input stream for text key as jsonObject
+     * @throws IOException
+     */
+    private JSONObject inputStreamToJsonObjText(InputStream is) throws IOException {
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonResponse = readAll(rd);
@@ -47,14 +58,19 @@ public class Solution {
             return jsonObjectText;
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException("Unable to convert Input Stream to Json Object.", e);
         }
         finally {
             is.close();
         }
     }
 
-    //Read BR and convert to string
+    /**
+     * Read BR and convert to string
+     * @param rd Reader
+     * @return String
+     * @throws IOException
+     */
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -64,18 +80,28 @@ public class Solution {
         return sb.toString();
     }
 
-    //Calculate number of occurrences of topic in text returned from Wiki
+
+    /**
+     * Calculate number of occurrences of topic in text returned from Wiki
+      * @param topicSource
+     * @param jsonObject to check for occurrence of topic
+     * @return count of occurrences
+     */
     public int countKeyword(TopicSource topicSource,JSONObject jsonObject){
         return StringUtils.countMatches(jsonObject.toString(), topicSource.topic());
     }
 
+    /**
+     * Main/Driver function
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception
     {
         Solution solution = new Solution();
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        Scanner reader = new Scanner(System.in);
         System.out.println("Enter the topic: ");
         String topic = reader.next();
-        //String topic = (args.length == 1) ? args[0] : DEFAULT_SEARCH_TERM;
         System.out.printf("Calculating occurrences for topic: %s, in Wiki data \n",topic);
         System.out.println(solution.getOccurrenceCount(topic) + " occurrences of search topic: " + topic);
     }
